@@ -1,0 +1,36 @@
+<?php
+if(!defined('HVZ')) exit;
+
+/* DIRECTIONS FOR USE
+ * 1. adjust settings below and save
+ * 2. cp settings.sample settings.php
+ * 3. rm settings.sample
+ */
+
+//URL of the site for use in links
+$url = $hvzurl = "$proto://tamuhvz.com/";
+
+//URL to use for cookies
+$cookie_url = 'tamuhvz.com';
+
+//increment this to force logout everyone
+$logout_epoch = 1;
+
+//database credentials
+$dbname = 'database name';
+$dbuser = 'database user';
+$dbpass = 'database password';
+$dbserver = 'database host (usually localhost)';
+
+//hash keys - change these to any random string
+$keys = array(
+	'key 1',
+	'key 2',
+	'key 3',
+);
+
+//only set up the db object if we're actually in the script
+//(since the mybb acp also includes this file for db creds)
+if(!defined('NOSETUP')) {
+	$db = new Database($dbname, $dbuser, $dbpass, $dbserver);
+}

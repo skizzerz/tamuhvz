@@ -1,0 +1,267 @@
+/* sitewide styles */
+
+body {
+	background-color: #333333;
+}
+
+#globalwrapper {
+	margin-left: 5%;
+	margin-right: 5%;
+	width: 89%;
+	position: absolute;
+	top: 0px;
+}
+
+#mainbox {
+	border-left: 3px solid #555555;
+	border-right: 3px solid #555555;
+	border-bottom: 3px solid #555555;
+	background-color: #ffffff;
+}
+
+/* header styles */
+
+#top {
+	background-color: #000000;
+	color: #ffffff;
+}
+
+#userbar {
+	position: absolute;
+	top: 5px;
+	right: 10px;
+}
+
+#userbar a {
+	color: #ff0000;
+	text-decoration: underline;
+}
+
+#userbar a:hover {
+	color: #ffffff;
+	text-decoration: underline;
+}
+
+#tabs {
+	width: 100%;
+	margin-top: -5px;
+	margin-bottom: 5px;
+}
+
+#tabs ul {
+	list-style-type: none;
+	display: inline;
+}
+
+#tabs ul li {
+	float: left;
+	padding-left: 15px;
+	padding-right: 15px; 
+	padding-top: 12px;
+}
+
+#tabs ul li.spacer {
+	background-color: #555555;
+	width: 2px;
+	padding: 0;
+	margin-top: 3px;
+	height: 42px;
+}
+
+#tabs ul li a {
+	vertical-align: middle;
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #dddddd;
+}
+
+.fade1 { 
+	height: 45px;
+	background-image: url("/images/fade1.png");
+	background-repeat: repeat-x;
+}
+
+.fade2 {
+	height: 45px;
+	background-image: url("/images/fade2.png");
+	background-repeat: repeat-x;
+}
+
+.fade3 {
+	height: 45px;
+	background-image: url("/images/fade3.png");
+	background-repeat: repeat-x;
+}
+
+/* content styles */
+#content {
+	padding:10px;
+}
+
+#content a {
+	color: #800000;
+	text-decoration: none;
+}
+
+#content a:hover {
+	color: #800000;
+	text-decoration: underline;
+}
+
+.messagebox {
+	border: 1px solid #800000;
+	padding: 10px;
+	padding-bottom: 0px;
+	width: 75%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.messagebox .header {
+	font-weight: bold;
+	font-size: 150%;
+	text-align: center;
+	margin: 0;
+}
+
+.messagebox .message {
+	margin: 0;
+}
+
+table.prettytable { background-color: transparent; width: 99%; }
+table.prettytable th, table.prettytable td { padding: 4px; }
+table.prettytable th { text-align: left; background-color: #999999; }
+table.prettytable tr { background-color: #cccccc; }
+table.prettytable tr:hover { background-color: #ffffcc; }
+table.prettytable input[type^="text"] { width: 98%; }
+table.prettytable input[type^="password"] { width: 98%; }
+
+.label {
+	float: right;
+	font-style: italic;
+}
+
+.error {
+	color: #ff0000;
+	font-weight: bold;
+}
+
+.hidden {
+	display: none;
+}
+
+/* footer styles */
+#footer {
+	color: #ffffff;
+	text-align: center;
+	font-size: 80%;
+	margin-top: 10px;
+	margin-bottom: 15px;
+}
+
+#footer a {
+	color: #ff0000;
+	text-decoration: underline;
+}
+
+#footer a:hover {
+	color: #ffffff;
+	text-decoration: underline;
+}
+
+/* ACP styles */
+#acp {
+	background-color: #000000;
+	color: #ffffff;
+	margin-top: -15px;
+	margin-bottom: -10px;
+	margin-left: -10px;
+	margin-right: -10px;
+	padding: 15px;
+}
+
+#acp table {
+	position: relative;
+	top: -15px;
+	left: -15px;
+	margin-bottom: -30px;
+}
+
+#acp-menu {
+	background-color: #555555;
+	color: #ffffff;
+	width: 200px;
+	vertical-align: top;
+}
+
+#acp-menu h1 {
+	margin-left: 10px;
+}
+
+#acp-menu ul {
+	list-style-type: none;
+	margin-left: -40px;
+}
+
+#acp-menu ul li {
+	padding-left: 40px;
+	margin-bottom: 5px;
+}
+
+#acp-menu ul li.selected {
+	background-color: #000000;
+}
+
+#acp-menu ul li a {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+#acp-menu ul li a:hover {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+#acp-content {
+	background-color: #000000;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 30px;
+	margin-top: -10px;
+	vertical-align: top;
+}
+
+#acp-content table {
+	margin-left: 20px;
+}
+
+#acp-content > a, #acp-content ul a {
+	color: #aaaaaa;
+	text-decoration: none;
+}
+
+#acp-content > a:hover, #acp-content ul a:hover {
+	color: #aaaaaa;
+	text-decoration: underline;
+}
+
+table.admintable { margin: 1em 1em 1em 0; background: #f9f9f9; border: 1px #aaa solid; color: #000000; border-collapse: collapse; empty-cells: show; width: 99%; }
+table.admintable th, table.admintable td { border: 1px #aaa solid; padding: 5px; }
+table.admintable th, table.admintable td.hl3, table.admintable th.hl3 { background: #8da7d6; text-align: center; }
+table.admintable td.hl1, table.admintable th.hl1 { background: #c5d8fc; text-align: center; }
+table.admintable td.hl2, table.admintable th.hl2 { background: #a7c1f2; text-align: center; }
+table.admintable tr.selected { background: #ffffcc; }
+table.admintable caption { margin-left: inherit; margin-right: inherit; font-weight: bold; color: #ffffff; }
+table.admintable td h3 { margin-top: 0px; }
+table.admintable input[type^="text"] { width: 98%; }
+table.admintable input[type^="password"] { width: 98%; }
+
+.editor-back {
+	width: 99%;
+	background-color: #ffffff;
+	padding: 10px;
+}
+
+.editor-back textarea {
+	margin-right: 20px;
+}
