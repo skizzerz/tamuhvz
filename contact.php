@@ -6,9 +6,10 @@
 <body>
 <h1>Contact Webmaster</h1>
 <?php
-if(isset($_POST['message'])) {
-	$db = mysql_connect('localhost', 'tamuhvzc_dbuser', 'hvzpass');
-	mysql_select_db('tamuhvzc_hvz', $db);
+require 'settings.php';
+if (isset($_POST['message'])) {
+	$db = mysql_connect($dbserver, $dbuser, $dbpass);
+	mysql_select_db($dbname, $db);
 	$replyto = ($_POST['from'] != '') ? $_POST['from'] : 'no-reply@tamuhvz.com';
 	$to = 'ryan-schmidt@tamu.edu';
 	$subject = mysql_real_escape_string('tamuhvz.com contact form message: ' . $_POST['subject']);
