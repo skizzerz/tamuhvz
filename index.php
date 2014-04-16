@@ -24,12 +24,14 @@ initSettings();
 //dispatch request
 dispatch();
 //standard header
-if(!isset($_GET['ajax']) && !(isset($_GET['mode']) && $_GET['mode'] == 'xmlhttp') && !isset($_GET['popup']))
+if (!isset($_GET['ajax']) && !(isset($_GET['mode']) && $_GET['mode'] == 'xmlhttp') && !isset($_GET['popup'])) {
 	include('templates/header.php');
+}
 //actual page
 include("templates/$page.php");
 //standard footer
-if(!isset($_GET['ajax']) && !(isset($_GET['mode']) && $_GET['mode'] == 'xmlhttp') && !isset($_GET['popup']))
+if(!isset($_GET['ajax']) && !(isset($_GET['mode']) && $_GET['mode'] == 'xmlhttp') && !isset($_GET['popup'])) {
 	include('templates/footer.php');
+}
 //finish output
 ob_end_flush();
