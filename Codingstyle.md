@@ -132,6 +132,7 @@ return (int) $var;
 return ( int )$var;
 return ( int ) $var;
 ```
+* Spaces (and parenthesis) after require, include, require_once, or include_once are optional.
 
 ### Comments
 * In comments, there should always be exactly one space between the comment character(s) and the start of the comment. For multiline comments, there should always be an additional asterisk on each line indented by one space
