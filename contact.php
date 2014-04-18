@@ -7,6 +7,7 @@
 <h1>Contact Webmaster</h1>
 <?php
 define('HVZ', true);
+require 'includes/db.php';
 require 'settings.php';
 if (isset($_POST['message'])) {
 	$replyto = ($_POST['from'] != '') ? $_POST['from'] : 'no-reply@tamuhvz.com';
