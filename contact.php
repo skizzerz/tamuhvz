@@ -13,7 +13,7 @@ if (isset($_POST['message'])) {
 	$replyto = ($_POST['from'] != '') ? $_POST['from'] : 'no-reply@tamuhvz.com';
 	$to = 'ryan-schmidt@tamu.edu';
 	$subject = mysql_real_escape_string('tamuhvz.com contact form message: ' . $_POST['subject']);
-	if($_SERVER['HTTP_X_FORWARD_FOR']) {
+	if(isset($_SERVER['HTTP_X_FORWARD_FOR'])) {
 		$ip = $_SERVER['HTTP_X_FORWARD_FOR'];
 	} else {
 		$ip = $_SERVER['REMOTE_ADDR'];
