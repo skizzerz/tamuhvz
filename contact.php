@@ -6,10 +6,9 @@
 <body>
 <h1>Contact Webmaster</h1>
 <?php
+define('HVZ', true);
 require 'settings.php';
 if (isset($_POST['message'])) {
-	$db = mysql_connect($dbserver, $dbuser, $dbpass);
-	mysql_select_db($dbname, $db);
 	$replyto = ($_POST['from'] != '') ? $_POST['from'] : 'no-reply@tamuhvz.com';
 	$to = 'ryan-schmidt@tamu.edu';
 	$subject = mysql_real_escape_string('tamuhvz.com contact form message: ' . $_POST['subject']);
@@ -18,8 +17,8 @@ if (isset($_POST['message'])) {
 	} else {
 		$ip = $_SERVER['REMOTE_ADDR'];
 	}
-	$message = str_replace("'", "\\'", wordwrap(htmlspecialchars($_POST['message'] . "\r\n\r\n----\r\nMessage originated from $ip"), 70));
-	mysql_query("INSERT INTO emailqueue (`time`,`to`,`replyto`,`subject`,`message`) VALUES(NOW(), 'ryan-schmidt@tamu.edu', '$replyto', '$subject', '$message')", $db);
+	$message = mysql_real_escape_string(wordwrap(htmlspecialchars($_POST['message'] . "\r\n\r\n----\r\nMessage originated from $ip"), 70));
+	$db->query("INSERT INTO emailqueue (`time`,`to`,`replyto`,`subject`,`message`) VALUES(NOW(), 'ryan-schmidt@tamu.edu', '$replyto', '$subject', '$message')");
 	echo 'Your email is being processed. If your message needs a reply, you should receive one in 48 hours.';
 	echo '<br /><a href="http://tamuhvz.com">Back to tamuhvz.com</a>';
 } else {
