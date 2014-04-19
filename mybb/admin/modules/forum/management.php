@@ -456,7 +456,7 @@ if($mybb->input['action'] == "permissions")
 			// User has set permissions for this group...
 			foreach($fields_array as $field)
 			{
-				if(strpos($field['Field'], 'can') !== false /* HACK */ || $field['Field'] == 'nopermissions')
+				if(strpos($field['Field'], 'can') !== false /* HACK: */ || $field['Field'] == 'nopermissions')
 				{
 					if(array_key_exists($field['Field'], $mybb->input['permissions']))
 					{
@@ -474,7 +474,7 @@ if($mybb->input['action'] == "permissions")
 			// Else, we assume that the group has no permissions...
 			foreach($fields_array as $field)
 			{
-				if(strpos($field['Field'], 'can') !== false /* HACK */ || $field['Field'] == 'nopermissions')
+				if(strpos($field['Field'], 'can') !== false /* HACK: */ || $field['Field'] == 'nopermissions')
 				{
 					$update_array[$db->escape_string($field['Field'])] = 0;
 				}
@@ -654,8 +654,8 @@ if($mybb->input['action'] == "permissions")
 			'canpostpolls' => 'polls',
 			'canvotepolls' => 'polls',
 			'cansearch' => 'misc',
-			//HACK:
-            'nopermissions' => 'misc',
+			// HACK:
+			'nopermissions' => 'misc',
 		);
 		
 		$groups = $plugins->run_hooks("admin_forum_management_permission_groups", $groups);
@@ -680,7 +680,7 @@ if($mybb->input['action'] == "permissions")
 		$fields_array = $db->show_fields_from("forumpermissions");
 		foreach($fields_array as $field)
 		{
-			if(strpos($field['Field'], 'can') !== false /* HACK */ || $field['Field'] == 'nopermissions')
+			if(strpos($field['Field'], 'can') !== false /* HACK: */ || $field['Field'] == 'nopermissions')
 			{
 				if(array_key_exists($field['Field'], $groups))
 				{
@@ -1045,7 +1045,7 @@ if($mybb->input['action'] == "add")
 	$form_container->end();
 	echo "</div>";
 
-	$query = $db->simple_select("usergroups", "*", "", array("order_dir" => "name"));
+	$query = $db->simple_select("usergroups", "*", "", array("order" => "name"));
 	while($usergroup = $db->fetch_array($query))
 	{
 		$usergroups[$usergroup['gid']] = $usergroup;
@@ -1440,7 +1440,7 @@ if($mybb->input['action'] == "edit")
 		$forum_data['title'] = $forum_data['name'];
 	}
 	
-	$query = $db->simple_select("usergroups", "*", "", array("order_dir" => "name"));
+	$query = $db->simple_select("usergroups", "*", "", array("order" => "name"));
 	while($usergroup = $db->fetch_array($query))
 	{
 		$usergroups[$usergroup['gid']] = $usergroup;
@@ -2267,7 +2267,7 @@ if(!$mybb->input['action'])
 		echo "</div>\n";
 		$form->end();
 		
-		$query = $db->simple_select("usergroups", "*", "", array("order_dir" => "name"));
+		$query = $db->simple_select("usergroups", "*", "", array("order" => "name"));
 		while($usergroup = $db->fetch_array($query))
 		{
 			$usergroups[$usergroup['gid']] = $usergroup;
