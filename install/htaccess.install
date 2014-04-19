@@ -1,0 +1,42 @@
+<Limit GET POST>
+order deny,allow
+deny from all
+allow from all
+</Limit>
+<Limit PUT DELETE>
+order deny,allow
+deny from all
+</Limit>
+
+RewriteEngine On
+
+RewriteCond %{QUERY_STRING} action=(logout|resetpassword)
+RewriteRule member\.php ?page=board&mode=%1 [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)\.php$ ?page=board&mode=$1 [L,QSA]
+
+RewriteRule ^mybb/*$ %url%/?page=board [L,QSA,R=301]
+RewriteRule ^mybb/search\.php %url%/?page=board&mode=search [L,QSA,R=301]
+RewriteRule ^mybb/misc\.php %url%/?page=board&mode=misc [L,QSA,R=301]
+RewriteRule ^mybb/index\.php$ %url%/?page=board [L,QSA,R=301]
+RewriteRule ^mybb/member\.php %url%/?page=board&mode=member [L,QSA,R=301]
+RewriteRule ^mybb/private\.php %url%/?page=board&mode=private [L,QSA,R=301]
+RewriteRule ^mybb/usercp\.php %url%/?page=board&mode=usercp [L,QSA,R=301]
+RewriteRule ^mybb/showthread\.php %url%/showthread.php [L,QSA,R=301]
+RewriteRule ^mybb/modcp\.php %url%/?page=board&mode=modcp [L,QSA,R=301]
+RewriteRule ^mybb/forumdisplay\.php %url%/?page=board&mode=forumdisplay [L,QSA,R=301]
+RewriteRule ^mybb/managegroup\.php %url%/?page=board&mode=managegroup [L,QSA,R=301]
+RewriteRule ^mybb/polls\.php %url%/?page=board&mode=polls [L,QSA,R=301]
+RewriteRule ^jscripts/(.*)$ mybb/jscripts/$1 [L,QSA]
+RewriteRule ^cache/(.*)$ mybb/cache/$1 [L,QSA]
+RewriteRule ^uploads/(.*)$ mybb/uploads/$1 [L,QSA]
+RewriteRule ^images/avatars/(.*)$ mybb/images/avatars/$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^images/(.*)$ mybb/images/$1 [L]
+
+DirectoryIndex index.php index.html
+IndexIgnore .htaccess */.??* *~ *# */HEADER* */README*
