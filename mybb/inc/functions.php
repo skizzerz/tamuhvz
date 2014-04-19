@@ -1349,6 +1349,7 @@ function fetch_forum_permissions($fid, $gid, $groupperms)
 		);
 		foreach($revoke as $p) {
 			$current_permissions[$p] = 0;
+		}
 	}
 
 	return $current_permissions;
