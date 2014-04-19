@@ -20,5 +20,6 @@
 /settings.php
 /mybb/inc/settings.php
 /mybb/inc/config.php
+/mybb/install/lock
 .bzr
 .bzrignore

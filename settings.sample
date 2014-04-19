@@ -7,6 +7,12 @@ if(!defined('HVZ')) exit;
  * 3. rm settings.sample
  */
 
+//this is the case (usually) when NOSETUP is defined
+//happens at least in emailqueue
+if(!isset($proto)) {
+        $proto = 'http';
+}
+
 //URL of the site for use in links
 $url = $hvzurl = "$proto://tamuhvz.com/";
 
@@ -24,13 +30,23 @@ $dbserver = 'database host (usually localhost)';
 
 //hash keys - change these to any random string
 $keys = array(
-	'key 1',
-	'key 2',
-	'key 3',
+        'key 1',
+        'key 2',
+        'key 3',
 );
+
+//secret salt (used for token hashing, etc.)
+//changing this will invalidate temporary password tokens and genid urls
+$secretsalt = 'change this to a random string';
 
 //only set up the db object if we're actually in the script
 //(since the mybb acp also includes this file for db creds)
 if(!defined('NOSETUP')) {
-	$db = new Database($dbname, $dbuser, $dbpass, $dbserver);
+        try {
+                $db = new Database($dbname, $dbuser, $dbpass, $dbserver);
+        } catch(Exception $e) {
+                echo $e->getMessage();
+                die(1);
+        }
 }
+
