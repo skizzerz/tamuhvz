@@ -1,12 +1,17 @@
 <?php
 if(!defined('HVZ')) die(-1);
 /**
- * Hash Library v3.0hvz3
- * Copyright (c) 2009-2010 Ryan Schmidt
+ * Hash Library v3.0hvz4
+ * Copyright (c) 2009-2014 Ryan Schmidt
  */
 
 class Password {
-	static function crypt( $password, $uid ) {
+	public static function crypt( $password, $uid ) {
+		// Use the PHP 5.5 password api to generate the hash
+		return password_hash($password, PASSWORD_BCRYPT, array('cost' => 15));
+	}
+
+	static function oldCrypt( $password, $uid ) {
 		global $keys;
 		$hash = ':';
 		
@@ -73,6 +78,11 @@ class Password {
 	}
 
 	static function compare( $hash, $password, $uid ) {
+		if (strpos($hash, '$') === 0) {
+			return password_verify($password, $hash);
+		}
+
+		// todo: this is horrible, once everyone is moved over to actual hashes, nuke this
 		global $keys;
 		$bits = explode( ':', $hash, 4 );
 		
@@ -120,7 +130,7 @@ class Password {
 		$h2 = rib64_decode( $bits[0] );
 		$hf = mcrypt_decrypt( MCRYPT_RIJNDAEL_256, $key, $h2, MCRYPT_MODE_CBC, $iv );
 		
-		if( $pw2 === $hf ) {
+		if( $pw2 === $hf || $pw === $hf ) {
 			//update the db
 			global $db;
 			$hash = self::crypt($password, $uid);
@@ -128,12 +138,12 @@ class Password {
 			return true;
 		}
 		
-		return ( $pw === $hf );
+		return false;
 	}
 
 	static function recursiveCryptCheck( $hash, $password, $uid = 7 ) {
 		if( !@self::compare( $hash, $password, $uid ) ) {
-			$hash = self::crypt( $password, $uid );
+			$hash = self::oldCrypt( $password, $uid );
 			return self::recursiveCryptCheck( $hash, $password, $uid );
 		}
 		return $hash;
