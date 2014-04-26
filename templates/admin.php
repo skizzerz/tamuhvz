@@ -23,6 +23,7 @@ if($proto == 'http') {
 <?php if ( $settings['guess'] ) { ?>
 <li class="<?= $section == 'guess' ? 'selected' : '' ?>"><a href="?page=admin&section=guess">View Guess Results</a></li>
 <?php } //end if guess ?>
+<li class="<?= $section == 'points' ? 'selected' : '' ?>"><a href="?page=admin&section=points">Manage Points</a></li>
 <li class="<?= $section == 'logs' ? 'selected' : '' ?>"><a href="?page=admin&section=logs">View Logs</a></li>
 </ul>
 </td>

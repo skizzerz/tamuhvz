@@ -30,28 +30,28 @@ if(isset($_POST['edituser'])) {
 				if($luser->faction != -3) {
 					//kill em off
 					$db->query("UPDATE users SET faction=-3 WHERE uin={$luser->uin}");
-					$db->query("UPDATE game SET starved=NOW() WHERE uin={$luser->uin}");
+					$db->query("UPDATE game SET starved=NOW() WHERE game={$settings['current game']} AND uin={$luser->uin}");
 				}
 				break;
 			case -2:
 				if($luser->faction != -2) {
 					//OZ
 					$db->query("UPDATE users SET faction=-2 WHERE uin={$luser->uin}");
-					$db->query("UPDATE game SET fed=NOW(), turned=NOW() WHERE uin={$luser->uin}");
+					$db->query("UPDATE game SET fed=NOW(), turned=NOW() WHERE game={$settings['current game']} AND uin={$luser->uin}");
 				}
 				break;
 			case -1:
 				if($luser->faction != -1) {
 					//Horde
 					$db->query("UPDATE users SET faction=-1 WHERE uin={$luser->uin}");
-					$db->query("UPDATE game SET fed=NOW(), turned=NOW() WHERE uin={$luser->uin}");
+					$db->query("UPDATE game SET fed=NOW(), turned=NOW() WHERE game={$settings['current game']} AND uin={$luser->uin}");
 				}
 				break;
 			default:
 				if(isDeletedFaction($faction)) break;
 				if($luser->faction < 0) {
 					//Cured
-					$db->query("UPDATE game SET id='$id' WHERE uin={$luser->uin}");
+					$db->query("UPDATE game SET id='$id' WHERE game={$settings['current game']} AND uin={$luser->uin}");
 				}
 				if($luser->faction != $faction && is_numeric($faction)) {
 					//switch factions
@@ -62,7 +62,7 @@ if(isset($_POST['edituser'])) {
 	}
 	if(isset($_POST['feed'])) {
 		writeLog('editplayer', 'feed', '', $luser->uin);
-		$db->query("UPDATE game SET fed=NOW() WHERE uin={$luser->uin}");
+		$db->query("UPDATE game SET fed=NOW() WHERE game={$settings['current game']} AND uin={$luser->uin}");
 	}
 	//don't allow anything else to be edited though
 	if( $luser->isAllowed('godmode') && !$user->isAllowed( 'developer' ) ) {
@@ -218,7 +218,7 @@ function listPlayers($faction, $pictures, $username, $kills, $fed, $starved, $tu
 	} else {
 		$where = '';
 	}
-	$res = $db->query("SELECT users.*,game.id,game.kills AS gkills,game.feeds AS gfeeds,game.turned,game.fed,game.starved FROM users LEFT JOIN game ON users.uin=game.uin $where ORDER BY users.name");
+	$res = $db->query("SELECT users.*,game.id,game.kills AS gkills,game.feeds AS gfeeds,game.turned,game.fed,game.starved FROM users LEFT JOIN game ON game.game={$settings['current game']} AND users.uin=game.uin $where ORDER BY users.name");
 	echo '<form method="GET" action=""><div style="text-align: center">Name filter: <input type="text" name="name" value="' . (isset($_GET['name']) ? $_GET['name'] : '') . '" /><br /><select name="af">';
 	$fs = $db->query("SELECT * FROM factions");
 	$fns = array();

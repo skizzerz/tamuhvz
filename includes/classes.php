@@ -4,7 +4,7 @@ if(!defined('HVZ')) die(-1);
 
 class User {
 	public $uin, $username, $name, $email, $status, $tfeeds, $tkills, $games, $faction, $picture, $options;
-	public $feeds, $kills, $turned, $fed, $starved, $id, $feedpref, $permissions = false, $token;
+	public $feeds, $kills, $turned, $fed, $starved, $id, $feedpref, $permissions = false, $token, $tpoints, $points;
 	public $loggedin, $registered, $loggedintime, $forum_id, $db;
 	
 	public function __construct($uin, $username = false, $email = false, $fromDb = true) {
@@ -13,7 +13,7 @@ class User {
 		if(!$fromDb) {
 			return;
 		}
-		global $db;
+		global $db, $settings;
 		$this->db = $db;
 		$res = $db->select('users', '*', array('uin' => $uin));
 		if(!$res->numRows()) {
@@ -34,6 +34,7 @@ class User {
 		$this->status = $row->status;
 		$this->tfeeds = $row->feeds;
 		$this->tkills = $row->kills;
+		$this->tpoints = $row->points;
 		$this->games = $row->games;
 		$this->feedpref = $row->feedpref;
 		$this->faction = $row->faction;
@@ -42,7 +43,7 @@ class User {
 		$this->parseOptions( $row->options );
 		$this->token = $row->token;
 		if($this->registered) {
-			$res = $db->select('game', '*', array('uin' => $uin));
+			$res = $db->select('game', '*', array('game' => $settings['current game'], 'uin' => $uin));
 			$row = $res->fetchRow();
 			$this->kills = $row->kills;
 			$this->feeds = $row->feeds;
@@ -50,6 +51,7 @@ class User {
 			$this->fed = $row->fed;
 			$this->starved = $row->starved;
 			$this->id = $row->id;
+			$this->points = $row->points;
 		}
 	}
 	
@@ -73,10 +75,12 @@ class User {
 	public function getStatus() { return $this->status; }
 	public function getTotalFeeds() { return $this->tfeeds; }
 	public function getTotalKills() { return $this->tkills; }
+	public function getTotalPoints() { return $this->tpoints; }
 	public function getGames() { return $this->games; }
 	public function getFaction() { return $this->faction; }
 	public function getFeeds() { return $this->feeds; }
 	public function getKills() { return $this->kills; }
+	public function getPoints() { return $this->points; }
 	public function getTurnedTime() { return $this->time($this->turned); }
 	public function getFedTime() { return $this->time($this->fed); }
 	public function getStarvedTime() { return $this->time($this->starved); }
@@ -120,7 +124,7 @@ class User {
 		if(!$s) {
 			throw new Exception('RU' . mysql_errno() . ': ' . mysql_error());
 		}
-		$s = $this->db->query("INSERT INTO game VALUES({$this->uin},'$id',DEFAULT,DEFAULT,DEFAULT,DEFAULT,DEFAULT)");
+		$s = $this->db->query("INSERT INTO game (game, uin, id) VALUES({$settings['current game']}, {$this->uin},'$id')");
 		if(!$s) {
 			throw new Exception('RG' . mysql_errno() . ': ' . mysql_error());
 		}
@@ -146,17 +150,18 @@ class User {
 	}
 	
 	public function makeId() {
+		global $settings;
 		$id = '';
 		for($i=0; $i<8; $i++) {
 			$id .= dechex(rand(0,15));
 		}
 		//is this ID already in use?
-		$res = $this->db->select('game', 'id', array('id' => $id));
+		$res = $this->db->select('game', 'id', array('game' => $settings['current game'], 'id' => $id));
 		if($res->numRows()) {
 			$res->freeResult();
 			return $this->makeId();
 		}
-		$res = $this->db->select('feeds', 'victim', array('victim' => $id));
+		$res = $this->db->select('feeds', 'victim', array('game' => $settings['current game'], 'victim' => $id));
 		if($res->numRows()) {
 			$res->freeResult();
 			return $this->makeId();
@@ -265,14 +270,10 @@ class User {
 	
 	public function kick() {
 		$this->db->query("UPDATE users SET registered=0, faction=0, status=1 WHERE uin={$this->uin}");
-		$this->db->query("DELETE FROM game WHERE uin={$this->uin}");
-		$this->db->query("DELETE FROM oz_pool WHERE uin={$this->uin}");
 	}
 	
 	public function ban() {
 		$this->db->query("UPDATE users SET registered=0, faction=0, status=2 WHERE uin={$this->uin}");
-		$this->db->query("DELETE FROM game WHERE uin={$this->uin}");
-		$this->db->query("DELETE FROM oz_pool WHERE uin={$this->uin}");
 	}
 	
 	public function unban() {

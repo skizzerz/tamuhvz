@@ -20,7 +20,7 @@ listPlayers($faction, $pictures, $kills, $fed, $starved, $turned);
 
 function listPlayers($faction, $pictures, $kills, $fed, $starved, $turned) {
 	global $db, $settings;
-	$res = $db->query("SELECT users.*,game.kills AS gkills,game.feeds AS gfeeds,game.turned,game.fed,game.starved FROM users LEFT JOIN game ON users.uin=game.uin ORDER BY users.name");
+	$res = $db->query("SELECT users.*,game.kills AS gkills,game.feeds AS gfeeds,game.turned,game.fed,game.starved FROM users LEFT JOIN game ON game.game={$settings['current game']} AND users.uin=game.uin ORDER BY users.name");
 	echo '<form method="GET" action=""><div style="text-align: center"><select name="af">';
 	$fs = $db->query("SELECT * FROM factions");
 	$fns = array();

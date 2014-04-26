@@ -7,7 +7,7 @@ if(isset($_POST['pausegame'])) {
 		//unpause game and update feed times for zombies
 		writeLog('game', 'unpause', false);
 		$add = time() - $settings['game paused']; //amount of time we have to add in
-		$db->query("UPDATE game SET fed=TIMESTAMPADD(SECOND, $add, fed) WHERE uin IN (SELECT uin FROM users WHERE faction<0 AND faction>-3)");
+		$db->query("UPDATE game SET fed=TIMESTAMPADD(SECOND, $add, fed) WHERE game={$settings['current game']} AND uin IN (SELECT uin FROM users WHERE faction<0 AND faction>-3)");
 		$db->query("UPDATE settings SET value='0' WHERE name='game paused'");
 		$settings['game paused'] = 0;
 	} else {
@@ -25,14 +25,14 @@ for($i = 0; $i < 5; $i++) {
 		$settings['game status'] = $i;
 		if($i == '0') {
 			//end the game
-			$db->query("TRUNCATE TABLE game");
-			$db->query("TRUNCATE TABLE feeds");
-			$db->query("TRUNCATE TABLE oz_pool");
+			$settings['current game']++;
+			$db->query("UPDATE settings set value='{$settings['current game']}' WHERE name='current game'");
+			$db->query("TRUNCATE TABLE oz_pool"); // we don't save the OZ pool since it has real names and phone numbers in it
 			$db->query("UPDATE users SET registered=0,faction=0");
 			$db->query("UPDATE users SET status=0 WHERE status=1"); //kicked people are no longer kicked
 			$db->query("UPDATE settings SET value='0' WHERE name='game paused'"); //unpause the game since it is now over
 			$settings['game paused'] = 0;
-		} elseif($i == '3') {
+		} elseif ($i == '3') {
 			if($settings['oz select'] == '0') {
 				//pick OZ(s)
 				$num = explode('/', $settings['number ozs']);
@@ -57,7 +57,7 @@ for($i = 0; $i < 5; $i++) {
 						$oz = $pool[$r];
 						array_splice($pool, $r, 1);
 						$db->query("UPDATE users SET faction=-2 WHERE uin='$oz'");
-						$db->query("UPDATE game SET turned=NOW(),fed=NOW() WHERE uin='$oz'");
+						$db->query("UPDATE game SET turned=NOW(),fed=NOW() WHERE game={$settings['current game']} AND uin='$oz'");
 						if($pooltotal - 1 - $i == 0) {
 							break; //oz pool is empty
 						}
@@ -69,7 +69,7 @@ for($i = 0; $i < 5; $i++) {
 						$oz = $pool[$r];
 						array_splice($pool, $r, 1);
 						$db->query("UPDATE users SET faction=-2 WHERE uin='$oz'");
-						$db->query("UPDATE game SET turned=NOW(),fed=NOW() WHERE uin='$oz'");
+						$db->query("UPDATE game SET turned=NOW(),fed=NOW() WHERE game={$settings['current game']} AND uin='$oz'");
 						if($pooltotal - 1 - $i == 0) {
 							break; //oz pool is empty
 						}
@@ -85,7 +85,7 @@ for($i = 0; $i < 5; $i++) {
 			$res = $db->query("SELECT * FROM users WHERE faction=-2");
 			while($row = $res->fetchRow()) {
 				$oz = $row->uin;
-				$db->query("UPDATE game SET turned=NOW(),fed=NOW() WHERE uin='$oz'");
+				$db->query("UPDATE game SET turned=NOW(),fed=NOW() WHERE game={$settings['current game']} AND uin='$oz'");
 			}
 		}
 		break;
@@ -140,8 +140,7 @@ they did when the game got paused</p>
 	<td style="text-align: center"><?= $settings['game status'] == '4' ? '<input type="submit" name="submit0" value="Advance" />' : ($settings['game status'] == '0' ? 'Current' : '') ?></td>
 	<td>
 		<h3>End Game</h3>
-		Well, it was fun while it lasted!<br />
-		<span class="error" style="font-size: 90%">WARNING: Advancing to this stage will delete all data associated with the current game!</b>
+		Well, it was fun while it lasted!
 	</td>
 </tr>
 </table>

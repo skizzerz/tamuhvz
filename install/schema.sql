@@ -84,12 +84,13 @@ DROP TABLE IF EXISTS `feeds`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `feeds` (
+  `game` int(10) NOT NULL,
   `zombie` int(9) NOT NULL,
   `victim` varchar(12) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `feeds` varchar(100) NOT NULL DEFAULT '',
-  PRIMARY KEY (`zombie`,`victim`),
-  UNIQUE KEY `victim` (`victim`)
+  PRIMARY KEY (`game`,`zombie`,`victim`),
+  UNIQUE KEY `victim` (`game`,`victim`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -101,6 +102,7 @@ DROP TABLE IF EXISTS `game`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game` (
+  `game` int(10) NOT NULL,
   `uin` int(9) NOT NULL,
   `id` varchar(12) NOT NULL DEFAULT '',
   `kills` int(10) NOT NULL DEFAULT '0',
@@ -108,8 +110,10 @@ CREATE TABLE `game` (
   `turned` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `fed` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `starved` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`uin`),
-  UNIQUE KEY `id` (`id`)
+  `points` int(10) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`game`, `uin`),
+  UNIQUE KEY `id` (`game`, `id`),
+  INDEX `points` (`game`, `points` DESC)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -152,6 +156,34 @@ CREATE TABLE `logging` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40000 ALTER TABLE `logging` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `missions`
+--
+
+DROP TABLE IF EXISTS `missions`;
+CREATE TABLE `missions` (
+  `game` int(10) NOT NULL,
+  `uin` int(11) NOT NULL,
+  `mission` int(10) NOT NULL,
+  `faction` int(10) NOT NULL,
+  PRIMARY KEY (`game`, `uin`, `mission`),
+  INDEX `uin` (`uin`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `mission_results`
+--
+
+DROP TABLE IF EXISTS `mission_results`;
+CREATE TABLE `mission_results` (
+  `game` int(10) NOT NULL,
+  `mission` int(10) NOT NULL,
+  `faction` int(10) NOT NULL,
+  `note` varchar(255) NOT NULL DEFAULT '',
+  `points` int(10) NOT NULL,
+  PRIMARY KEY (`game`, `mission`, `faction`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `oz_pool`
@@ -210,7 +242,7 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES ('game status','0'),('change usernames','0'),('starve time','1000'),('feed partners','2'),('inactivity time','8760'),('profile pictures','1'),('printid','1'),('factions','1'),('number ozs','1/100'),('oz hide','24'),('nextid','1'),('board','1'),('email','3'),('oz select','1'),('game paused','0'),('emailall','1'),('late register human','48'),('late register zombie','0'),('email confirmation','0'),('guess','0');
+INSERT INTO `settings` VALUES ('game status','0'),('change usernames','0'),('enable starvation', '1'),('starve time','1000'),('feed partners','2'),('inactivity time','8760'),('profile pictures','1'),('printid','1'),('factions','1'),('number ozs','1/100'),('oz hide','24'),('nextid','1'),('board','1'),('email','3'),('oz select','1'),('game paused','0'),('emailall','1'),('late register human','48'),('late register zombie','0'),('email confirmation','0'),('guess','0'),('current game','0');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -255,9 +287,11 @@ CREATE TABLE `users` (
   `loggedin` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `options` varchar(1024) NOT NULL DEFAULT '',
   `token` varchar(64) NULL,
+  `points` int(10) NOT NULL DEFAULT 0,
   PRIMARY KEY (`uin`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `username` (`username`),
+  INDEX `points` (`points` DESC),
   KEY `registered` (`registered`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

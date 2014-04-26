@@ -95,11 +95,11 @@ function dispatch() {
 	setVar('pagename', 'Page Not Found'); //default value
 	if ($user->loggedin && $settings['game paused'] == 0 && $settings['enable starvation']) {
 		//update list of who's alive/deceased (log starvation as well)
-		$res = $db->query("SELECT users.uin,users.faction FROM users LEFT JOIN game ON users.uin=game.uin WHERE (users.faction=-1 OR users.faction=-2) AND TIMEDIFF(TIMESTAMPADD(HOUR,(SELECT value FROM settings WHERE name='starve time'),game.fed),NOW())<0");
+		$res = $db->query("SELECT users.uin,users.faction FROM users LEFT JOIN game ON game.game={$settings['current game']} AND users.uin=game.uin WHERE (users.faction=-1 OR users.faction=-2) AND TIMEDIFF(TIMESTAMPADD(HOUR,(SELECT value FROM settings WHERE name='starve time'),game.fed),NOW())<0");
 		while($row = $res->fetchRow()) {
 			writeLog('kill', 'starve', array('old' => $row->faction));
 		}
-		$db->query("UPDATE users,game SET users.faction=-3,game.starved=NOW() WHERE users.uin=game.uin AND (users.faction=-1 OR users.faction=-2) AND TIMEDIFF(TIMESTAMPADD(HOUR,(SELECT value FROM settings WHERE name='starve time'),game.fed),NOW())<0");
+		$db->query("UPDATE users,game SET users.faction=-3,game.starved=NOW() WHERE game.game={$settings['current game']} AND users.uin=game.uin AND (users.faction=-1 OR users.faction=-2) AND TIMEDIFF(TIMESTAMPADD(HOUR,(SELECT value FROM settings WHERE name='starve time'),game.fed),NOW())<0");
 	}
 	$res = $db->select('factions', true);
 	$factionsh = array();
@@ -275,6 +275,7 @@ function dispatchAdmin($user) {
 		case 'logs':
 		case 'ozpool':
 		case 'guess':
+		case 'points':
 			break;
 		default:
 			setVar('page', 'invalid');

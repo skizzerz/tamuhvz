@@ -44,7 +44,7 @@ if (isset($_POST['submit'])) {
 	$ret = checkValidId($id);
 	if($ret === true) {
 		//valid id, get variables
-		$res = $db->query("SELECT * FROM game WHERE id='$id'");
+		$res = $db->query("SELECT * FROM game WHERE game={$settings['current game']} AND id='$id'");
 		$row = $res->fetchRow();
 		$vuin = $row->uin;
 		$res->freeResult();
@@ -60,19 +60,19 @@ if (isset($_POST['submit'])) {
 				$puin = decodeString($_POST["feed$i"]);
 				$partners[] = $puin;
 				$db->query("UPDATE users SET feeds=feeds+1 WHERE uin='$puin'");
-				$db->query("UPDATE game SET feeds=feeds+1, fed=NOW() WHERE uin='$puin'");
+				$db->query("UPDATE game SET feeds=feeds+1, fed=NOW() WHERE game={$settings['current game']} AND uin='$puin'");
 			}
 		}
 		//now update this user
 		$uin = $user->uin;
 		$db->query("UPDATE users SET feeds=feeds+1, kills=kills+1 WHERE uin='$uin'");
-		$db->query("UPDATE game SET feeds=feeds+1, kills=kills+1, fed=NOW() WHERE uin='$uin'");
-		$db->query("INSERT INTO feeds (zombie, victim, time, feeds) VALUES('$uin', '$id', NOW(), '$partners')");
+		$db->query("UPDATE game SET feeds=feeds+1, kills=kills+1, fed=NOW() WHERE game={$settings['current game']} AND uin='$uin'");
+		$db->query("INSERT INTO feeds (game, zombie, victim, time, feeds) VALUES({$settings['current game']}, '$uin', '$id', NOW(), '$partners')");
 		//and update the victim (we report time turned/fed as 1 hour from now, but just mark them as a zombie now)
 		//but don't update a suicided victim
 		if ($row->registered) {
 			$db->query("UPDATE users SET faction=-1 WHERE uin='$vuin'");
-			$db->query("UPDATE game SET fed=TIMESTAMPADD(HOUR, 1, NOW()), turned=TIMESTAMPADD(HOUR, 1, NOW()) WHERE uin='$vuin'");
+			$db->query("UPDATE game SET fed=TIMESTAMPADD(HOUR, 1, NOW()), turned=TIMESTAMPADD(HOUR, 1, NOW()) WHERE game={$settings['current game']} AND uin='$vuin'");
 		}
 		//log attempt
 		writeLog('kill', 'kill', $partners, $vuin, $id);
@@ -91,7 +91,7 @@ function checkValidId($id) {
 		echo '<span class="error">Invalid ID. If a player gave this ID to you, please contact a mod</span><br />';
 		return 'invalid';
 	}
-	$res = $db->query("SELECT * FROM game WHERE id='$id'");
+	$res = $db->query("SELECT * FROM game WHERE game={$settings['current game']} AND id='$id'");
 	if ($res->numRows()) {
 		//id is in game table, let's make sure it belongs to a human
 		$row = $res->fetchRow();
@@ -103,7 +103,7 @@ function checkValidId($id) {
 			//"human", now check if they're registered or not (aka suicided)
 			if (!$row->registered) {
 				//suicided, so see if they've already been fed on
-				$res2 = $db->query("SELECT * FROM feeds WHERE victim='$id'");
+				$res2 = $db->query("SELECT * FROM feeds WHERE game={$settings['current game']} AND victim='$id'");
 				if ($res2->numRows()) {
 					//already eaten
 					echo '<span class="error">This ID has already been used. If a player gave this ID to you, please contact a mod</span><br />';
@@ -119,7 +119,7 @@ function checkValidId($id) {
 		}
 	} else {
 		//id not found in game table, perhaps it is in feeds (e.g. player had that id, was killed, then cured)
-		$res = $db->query("SELECT * FROM feeds WHERE victim='$id'");
+		$res = $db->query("SELECT * FROM feeds WHERE game={$settings['current game']} AND victim='$id'");
 		if ($res->numRows()) {
 			//comment above is accurate
 			echo '<span class="error">This ID has already been used. If a player gave this ID to you, please contact a mod</span><br />';
