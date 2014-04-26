@@ -1,5 +1,5 @@
-<?php if(!defined('HVZ')) die(-1); ?>
-<?php if($settings['game status'] < 4) {
+<?php if (!defined('HVZ')) die(-1); ?>
+<?php if ($settings['game status'] < 4) {
 	//game hasn't started yet
 ?>
 <div class="messagebox">
@@ -8,7 +8,7 @@
 </div>
 <?php
 	return;
-} elseif($user->faction != -2 && $user->faction != -1 && !$user->isAllowed('mundo')) {
+} elseif ($user->faction != -2 && $user->faction != -1 && !$user->isAllowed('mundo')) {
 	//not a zombie
 ?>
 <div class="messagebox">
@@ -17,7 +17,7 @@
 </div>
 <?php
 	return;
-} elseif($settings['game paused'] != 0) {
+} elseif ($settings['game paused'] != 0) {
 ?>
 <div class="messagebox">
 <div class="header">Game Paused</div>
@@ -30,7 +30,7 @@
 <h1>Report a Kill</h1>
 <?php
 $idregex = '/^[0-9abcdef]{8}$/i';
-if(isset($_POST['submit'])) {
+if (isset($_POST['submit'])) {
 	//kill be reported, check if it's a valid id
 	$id = $_POST['id'];
 	//do some common replacements
@@ -52,9 +52,9 @@ if(isset($_POST['submit'])) {
 		$row = $res->fetchRow();
 		//first get the list of who he's feeding and feed them, if applicable
 		$partners = array();
-		if($settings['feed partners'] > 0) {
-			for($i = 0; $i < $settings['feed partners']; $i++) {
-				if(!isset($_POST["feed$i"]) || isset($_POST["nofeed$i"])) {
+		if ($settings['enable starvation'] && $settings['feed partners'] > 0) {
+			for ($i = 0; $i < $settings['feed partners']; $i++) {
+				if (!isset($_POST["feed$i"]) || isset($_POST["nofeed$i"])) {
 					continue;
 				}
 				$puin = decodeString($_POST["feed$i"]);
@@ -70,7 +70,7 @@ if(isset($_POST['submit'])) {
 		$db->query("INSERT INTO feeds (zombie, victim, time, feeds) VALUES('$uin', '$id', NOW(), '$partners')");
 		//and update the victim (we report time turned/fed as 1 hour from now, but just mark them as a zombie now)
 		//but don't update a suicided victim
-		if($row->registered) {
+		if ($row->registered) {
 			$db->query("UPDATE users SET faction=-1 WHERE uin='$vuin'");
 			$db->query("UPDATE game SET fed=TIMESTAMPADD(HOUR, 1, NOW()), turned=TIMESTAMPADD(HOUR, 1, NOW()) WHERE uin='$vuin'");
 		}
@@ -86,25 +86,25 @@ if(isset($_POST['submit'])) {
 
 function checkValidId($id) {
 	global $idregex, $db;
-	if(!preg_match($idregex, $id)) {
+	if (!preg_match($idregex, $id)) {
 		//invalid id (not 8 hex digits)
 		echo '<span class="error">Invalid ID. If a player gave this ID to you, please contact a mod</span><br />';
 		return 'invalid';
 	}
 	$res = $db->query("SELECT * FROM game WHERE id='$id'");
-	if($res->numRows()) {
+	if ($res->numRows()) {
 		//id is in game table, let's make sure it belongs to a human
 		$row = $res->fetchRow();
 		$vuin = $row->uin;
 		$res->freeResult();
 		$res = $db->query("SELECT * FROM users WHERE uin='$vuin'");
 		$row = $res->fetchRow();
-		if($row->faction >= 0) {
+		if ($row->faction >= 0) {
 			//"human", now check if they're registered or not (aka suicided)
-			if(!$row->registered) {
+			if (!$row->registered) {
 				//suicided, so see if they've already been fed on
 				$res2 = $db->query("SELECT * FROM feeds WHERE victim='$id'");
-				if($res2->numRows()) {
+				if ($res2->numRows()) {
 					//already eaten
 					echo '<span class="error">This ID has already been used. If a player gave this ID to you, please contact a mod</span><br />';
 					return 'used';
@@ -120,7 +120,7 @@ function checkValidId($id) {
 	} else {
 		//id not found in game table, perhaps it is in feeds (e.g. player had that id, was killed, then cured)
 		$res = $db->query("SELECT * FROM feeds WHERE victim='$id'");
-		if($res->numRows()) {
+		if ($res->numRows()) {
 			//comment above is accurate
 			echo '<span class="error">This ID has already been used. If a player gave this ID to you, please contact a mod</span><br />';
 			return 'used';
@@ -134,8 +134,8 @@ function checkValidId($id) {
 }
 
 function getValidIdFromGet() {
-	if(isset($_GET['victimid'])) {
-		if(($out = checkValidId($_GET['victimid'])) === true) { //checkValidId() will output error messages
+	if (isset($_GET['victimid'])) {
+		if (($out = checkValidId($_GET['victimid'])) === true) { //checkValidId() will output error messages
 			return $_GET['victimid'];
 		} else {
 			writeLog('kill', $out, $_GET['victimid']);
@@ -148,7 +148,7 @@ $getid = getValidIdFromGet();
 <form method="post" action="?page=main&tab=reportkill">
 <table cellspacing="10">
 <tr><td>ID:</td><td><input type="text" name="id" value="<?= $getid; ?>" /></td></tr>
-<?php if($settings['feed partners'] > 0) { ?>
+<?php if ($settings['enable starvation'] && $settings['feed partners'] > 0) { ?>
 <tr><td style="vertical-align: top">Feed partners:</td><td><?php
 //get all zmobies
 $res = $db->query("SELECT users.uin,users.name,users.registered,users.feedpref,game.fed,game.kills FROM users LEFT JOIN game ON users.uin = game.uin WHERE users.faction=-1 OR users.faction=-2 ORDER BY game.fed");

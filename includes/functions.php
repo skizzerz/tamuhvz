@@ -9,8 +9,8 @@ function dispatch() {
 	global $db, $settings, $factionsh, $logout_epoch;
 	$action = isset($_GET['page']) ? $_GET['page'] : 'main';
 	//initalize the user
-	if(isset($_SESSION['uin'])) {
-		if(!isset($_SESSION['logout_epoch']) || $_SESSION['logout_epoch'] < $logout_epoch) {
+	if (isset($_SESSION['uin'])) {
+		if (!isset($_SESSION['logout_epoch']) || $_SESSION['logout_epoch'] < $logout_epoch) {
 			//force logout
 			setcookie('hvz', '', time() - 3600);
 			setcookie('mybbuser', '', time() - 3600);
@@ -24,13 +24,13 @@ function dispatch() {
 		} else {
 			$user = new User($_SESSION['uin'], $_SESSION['username']);
 			$originalUser = $user;
-			if($user->isAllowed('developer') && isset($_COOKIE['masquerade'])) {
+			if ($user->isAllowed('developer') && isset($_COOKIE['masquerade'])) {
 				$user = new User(rib64_decode($_COOKIE['masquerade']));
 			}
 		}
 	} elseif(isset($_COOKIE['hvz'])) {
 		$p = explode('|', rib64_decode($_COOKIE['hvz']));
-		if(!isset($p[3]) || $p[3] < $logout_epoch) {
+		if (!isset($p[3]) || $p[3] < $logout_epoch) {
 			//force logout
 			setcookie('hvz', '', time() - 3600);
 			setcookie('mybbuser', '', time() - 3600);
@@ -53,7 +53,7 @@ function dispatch() {
 				$_SESSION['logout_epoch'] = $logout_epoch;
 				$user = new User(rib64_decode($p[1]), rib64_decode($p[2]));
 				$originalUser = $user;
-				if($user->isAllowed('developer') && isset($_COOKIE['masquerade'])) {
+				if ($user->isAllowed('developer') && isset($_COOKIE['masquerade'])) {
 					$user = new User(rib64_decode($_COOKIE['masquerade']));
 				}
 			}
@@ -67,7 +67,7 @@ function dispatch() {
 	setVar('tab', 'none'); //default value
 	setVar('page', 'invalid'); //default value
 	setVar('pagename', 'Page Not Found'); //default value
-	if($user->loggedin && $settings['game paused'] == 0) {
+	if ($user->loggedin && $settings['game paused'] == 0 && $settings['enable starvation']) {
 		//update list of who's alive/deceased (log starvation as well)
 		$res = $db->query("SELECT users.uin,users.faction FROM users LEFT JOIN game ON users.uin=game.uin WHERE (users.faction=-1 OR users.faction=-2) AND TIMEDIFF(TIMESTAMPADD(HOUR,(SELECT value FROM settings WHERE name='starve time'),game.fed),NOW())<0");
 		while($row = $res->fetchRow()) {
