@@ -4,7 +4,7 @@ if(!defined('HVZ')) die(-1);
 
 class User {
 	public $uin, $username, $name, $email, $status, $tfeeds, $tkills, $games, $faction, $picture, $options;
-	public $feeds, $kills, $turned, $fed, $starved, $id, $feedpref, $permissions = false;
+	public $feeds, $kills, $turned, $fed, $starved, $id, $feedpref, $permissions = false, $token;
 	public $loggedin, $registered, $loggedintime, $forum_id, $db;
 	
 	public function __construct($uin, $username = false, $email = false, $fromDb = true) {
@@ -24,8 +24,8 @@ class User {
 		$this->loggedin = true;
 		$this->username = $row->username;
 		if($username && $this->username != $username) {
-			//netid changed or something, update username
-			$this->updateName( $username );
+			//not a match, force a relog
+			return self::getDefaultUser();
 		}
 		$this->forum_id = $row->forum_id;
 		$this->email = $row->email;
@@ -40,6 +40,7 @@ class User {
 		$this->registered = $row->registered;
 		$this->loggedintime = $row->loggedin;
 		$this->parseOptions( $row->options );
+		$this->token = $row->token;
 		if($this->registered) {
 			$res = $db->select('game', '*', array('uin' => $uin));
 			$row = $res->fetchRow();
@@ -67,6 +68,7 @@ class User {
 	public function getUin() { return $this->uin; }
 	public function getUsername() { return $this->username; }
 	public function getEmail() { return $this->email; }
+	public function getToken() { return $this->token; }
 	public function getName() { return $this->name; }
 	public function getStatus() { return $this->status; }
 	public function getTotalFeeds() { return $this->tfeeds; }

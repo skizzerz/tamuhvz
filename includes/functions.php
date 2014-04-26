@@ -42,19 +42,45 @@ function dispatch() {
 			$user = User::getDefaultUser();
 			$originalUser = $user;
 		} else {
-			if(time() > $p[0]) {
+			if (time() > $p[0]) {
 				//expired
 				$user = User::getDefaultUser();
 				$originalUser = $user;
 			} else {
 				//not expired
-				$_SESSION['uin'] = rib64_decode($p[1]);
-				$_SESSION['username'] = rib64_decode($p[2]);
-				$_SESSION['logout_epoch'] = $logout_epoch;
-				$user = new User(rib64_decode($p[1]), rib64_decode($p[2]));
+				$uin = rib64_decode($p[1]);
+				$username = rib64_decode($p[2]);
+				$token = isset($p[4]) ? rib64_decode($p[4]) : '';
+				$validSoFar = true;
+				if (!is_numeric($uin) || $uin < 1 || !ctype_xdigit($token)) {
+					$validSoFar = false;
+				}
+				if ($validSoFar) {
+					$user = new User($uin, $username);
+					$validSoFar = $user->getUin() > 0;
+				} else {
+					$user = User::getDefaultUser();
+				}
+				if ($validSoFar && $token != $user->getToken()) {
+					$validSoFar = false;
+				}
 				$originalUser = $user;
-				if ($user->isAllowed('developer') && isset($_COOKIE['masquerade'])) {
-					$user = new User(rib64_decode($_COOKIE['masquerade']));
+				if ($validSoFar) {
+					$_SESSION['uin'] = $uin;
+					$_SESSION['username'] = $username;
+					$_SESSION['logout_epoch'] = $logout_epoch;
+					if ($user->isAllowed('developer') && isset($_COOKIE['masquerade'])) {
+						$user = new User(rib64_decode($_COOKIE['masquerade']));
+					}
+				} else {
+					// invalid (bogus cookie)
+					setcookie('hvz', '', time() - 3600);
+					setcookie('mybbuser', '', time() - 3600);
+					setcookie('vtoken', '', time() - 3600);
+					setcookie('sid', '', time() - 3600);
+					setcookie('masquerade', '', time() - 3600);
+					session_destroy();
+					session_unset();
 				}
 			}
 		}

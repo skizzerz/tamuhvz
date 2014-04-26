@@ -254,6 +254,7 @@ CREATE TABLE `users` (
   `status` tinyint(2) NOT NULL DEFAULT '0',
   `loggedin` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `options` varchar(1024) NOT NULL DEFAULT '',
+  `token` varchar(64) NULL,
   PRIMARY KEY (`uin`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `username` (`username`),

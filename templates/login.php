@@ -17,13 +17,15 @@ if(isset($_POST['login'])) {
 		$row = $res->fetchRow();
 		if(Password::compare($row->password, $pass, $row->uin)) {
 			$db->query("DELETE FROM temp_pw WHERE uin={$row->uin}"); //remove any temp pws
+			$token = bin2hex(openssl_random_pseudo_bytes(32));
+			$db->query("UPDATE users SET token='{$token}' WHERE uin={$row->uin}");
 			$_SESSION['username'] = $row->username;
 			$_SESSION['uin'] = $row->uin;
 			$_SESSION['logout_epoch'] = $logout_epoch;
 			if(isset($_POST['rememberme'])) {
 				//make a cookie
 				$time = time() + 60 * 60 * 24 * 30; //30 days
-				setcookie('hvz', rib64_encode($time . '|' . rib64_encode($row->uin) . '|' . rib64_encode($row->username) . '|' . $logout_epoch), $time, '/');
+				setcookie('hvz', rib64_encode($time . '|' . rib64_encode($row->uin) . '|' . rib64_encode($row->username) . '|' . $logout_epoch . '|' . rib64_encode($token)), $time, '/');
 			}
 ?>
 <h1>Logging In...</h1>
