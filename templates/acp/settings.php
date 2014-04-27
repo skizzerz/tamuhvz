@@ -87,6 +87,25 @@ if (isset($_POST['submit'])) {
 		$db->query("UPDATE settings SET value='$lateregisterzombie' WHERE name='late register zombie'");
 		$settings['late register zombie'] = $lateregisterzombie;
 	}
+	if (is_numeric($participationpoints) && $participationpoints >= 0) {
+		if ($settings['participation points'] != $participationpoints) {
+			writeLog('settings', 'participationpoints', array('old' => $settings['participation points'], 'new' => $participationpoints));
+			$db->update('settings', array('value' => $participationpoints), array('name' => 'participation points'));
+			$settings['participation points'] = $participationpoints;
+		}
+	} else {
+		echo '<span class="error">Invalid participation points given</span><br />';
+	}
+
+	if (is_numeric($killpoints) && $killpoints >= 0) {
+		if ($settings['kill points'] != $killpoints) {
+			writeLog('settings', 'killpoints', array('old' => $settings['kill points'], 'new' => $killpoints));
+			$db->update('settings', array('value' => $killpoints), array('name' => 'kill points'));
+			$settings['kill points'] = $killpoints;
+		}
+	} else {
+		echo '<span class="error">Invalid kill points given</span><br />';
+	}
 }
 ?>
 <form method="post" action="?page=admin&section=settings">
@@ -104,6 +123,8 @@ if (isset($_POST['submit'])) {
 <?php if($settings['factions'] > 0) { ?>
 <tr><td>Faction Assignment</td><td><input type="radio" name="factions" id="fac1" value="1" <?= $settings['factions'] == '1' ? 'checked="checked"' : '' ?> /><label for="fac1">Manual</label><br /><input type="radio" name="factions" id="fac2" value="2" <?= $settings['factions'] == '2' ? 'checked="checked"' : '' ?> /><label for="fac2">Automatic (random)</label><br /><input type="radio" name="factions" id="fac3" value="3" <?= $settings['factions'] == '3' ? 'checked="checked"' : '' ?> /><label for="fac3">Player's choice</label><br /></td><td>How factions should be assigned when the user registers for the game. If set to "Manual", every user will be put in the "Resistance" group. If set to "Automatic (random)", every user will be assigned a random group when they register. If set to "Player's choice", every user will be given a dropdown to select a group from when they register</td></tr>
 <?php } //end factions enabled check ?>
+<tr><td>Participation Points</td><td><input type="text" name="participationpoints" id="participationpoints" value="<?= $settings['participation points'] ?>" /></td><td>Number of points a player gets for participating in a game</td></tr>
+<tr><td>Kill Points</td><td><input type="text" name="killpoints" id="killpoints" value="<?= $settings['kill points'] ?>" /></td><td>Number of points a player gets for reporting a kill</td></tr>
 </table>
 <br />
 <input type="submit" name="submit" value="Update settings" />

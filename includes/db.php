@@ -39,6 +39,7 @@ class Database {
 		if($conds != array()) {
 			$q .= " WHERE";
 			foreach($conds as $k => $v) {
+				$v = mysql_real_escape_string($v, $this->link);
 				$q .= " AND `$k`='$v'";
 			}
 			$q = str_replace("WHERE AND", "WHERE", $q);
@@ -66,7 +67,7 @@ class Database {
 		$w = '';
 		if(is_array($what)) {
 			foreach($what as $k => $v) {
-				$w .= '`' . $k . '`=\'' . $v . '\',';
+				$w .= '`' . $k . '`=\'' . mysql_real_escape_string($v, $this->link) . '\',';
 			}
 		} else {
 			$w = "`$what`";
@@ -76,6 +77,7 @@ class Database {
 		if($conds != array()) {
 			$q .= " WHERE";
 			foreach($conds as $k => $v) {
+				$v = mysql_real_escape_string($v, $this->link);
 				$q .= " AND `$k`='$v'";
 			}
 			$q = str_replace("WHERE AND", "WHERE", $q);

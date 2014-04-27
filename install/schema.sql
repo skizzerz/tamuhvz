@@ -172,6 +172,20 @@ CREATE TABLE `missions` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
+-- Table structure for table `mission_info`
+--
+
+DROP TABLE IF EXISTS `mission_info`;
+CREATE TABLE `mission_info` (
+  `game` int(10) NOT NULL,
+  `mission` int(10) NOT NULL,
+  `description` text NOT NULL,
+  `points` int(10) NOT NULL DEFAULT 0,
+  `flags` int(10) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`game`, `mission`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `mission_results`
 --
 
@@ -181,7 +195,7 @@ CREATE TABLE `mission_results` (
   `mission` int(10) NOT NULL,
   `faction` int(10) NOT NULL,
   `note` varchar(255) NOT NULL DEFAULT '',
-  `points` int(10) NOT NULL,
+  `points` int(10) NOT NULL DEFAULT 0,
   PRIMARY KEY (`game`, `mission`, `faction`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -242,7 +256,7 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES ('game status','0'),('change usernames','0'),('enable starvation', '1'),('starve time','1000'),('feed partners','2'),('inactivity time','8760'),('profile pictures','1'),('printid','1'),('factions','1'),('number ozs','1/100'),('oz hide','24'),('nextid','1'),('board','1'),('email','3'),('oz select','1'),('game paused','0'),('emailall','1'),('late register human','48'),('late register zombie','0'),('email confirmation','0'),('guess','0'),('current game','0');
+INSERT INTO `settings` VALUES ('game status','0'),('change usernames','0'),('enable starvation', '1'),('starve time','1000'),('feed partners','2'),('inactivity time','8760'),('profile pictures','1'),('printid','1'),('factions','1'),('number ozs','1/100'),('oz hide','24'),('nextid','1'),('board','1'),('email','3'),('oz select','1'),('game paused','0'),('emailall','1'),('late register human','48'),('late register zombie','0'),('email confirmation','0'),('guess','0'),('current game','0'),('participation points','1'),('kill points','1');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
