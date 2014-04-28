@@ -259,6 +259,10 @@ function dispatchMain($user) {
 			setVar('page', 'printid');
 			setVar('pagename', 'Print ID');
 			break;
+		case 'leaderboard':
+			setVar('page', 'leaderboard');
+			setVar('pagename', 'Leaderboard');
+			break;
 	}
 }
 

@@ -77,7 +77,7 @@ if (isset($_POST['submit'])) {
 		//log attempt
 		writeLog('kill', 'kill', $partners, $vuin, $id);
 		//report success
-		echo '<span class="error">Kill successful</span><br />';
+		echo '<span class="success">Kill successful</span><br />';
 	} else {
 		//invalid, checkValidId() outputs error message but we need to log it
 		writeLog('kill', $ret, $id);

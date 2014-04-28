@@ -141,8 +141,23 @@ table.prettytable input[type^="password"] { width: 98%; }
 	font-style: italic;
 }
 
+.label2 {
+	text-align: right;
+	width: 4em;
+	display: inline-block;
+}
+
+.label2.wide {
+	width: 9em;
+}
+
 .error {
 	color: #ff0000;
+	font-weight: bold;
+}
+
+.success {
+	color: #008000;
 	font-weight: bold;
 }
 
@@ -265,3 +280,4 @@ table.admintable input[type^="password"] { width: 98%; }
 .editor-back textarea {
 	margin-right: 20px;
 }
+

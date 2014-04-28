@@ -15,7 +15,8 @@ $names = array(
 	'permissions' => 'Permissions log',
 	'register' => 'Registration log',
 	'settings' => 'Settings log',
-	'username' => 'Username log'
+	'username' => 'Username log',
+	'mission' => 'Mission log',
 );
 
 $messages = array(
@@ -56,6 +57,7 @@ $messages = array(
 	'game/advance' => 'advanced game to stage $3',
 	'game/pause' => 'paused the game',
 	'game/unpause' => 'unpaused the game',
+	'mission/redeem' => 'redeemed code $3 in faction #$4',
 	'settings' => 'changed setting "$0" from "$3" to "$4"', //settings is a special case
 );
 

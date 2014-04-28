@@ -62,6 +62,8 @@
 		<li class="spacer">&nbsp;</li>
 		<li class="fade<?= $tab == 'profile' ? '2' : '1' ?>"><a href="<?= $url ?>?page=profile">Profile</a></li>
 		<li class="spacer">&nbsp;</li>
+		<li class="fade<?= $tab == 'leaderboard' ? '2' : '1' ?>"><a href="<?= $url ?>?page=main&tab=leaderboard">Leaderboard</a></li>
+		<li class="spacer">&nbsp;</li>
 		<li class="fade<?= $tab == 'rules' ? '2' : '1' ?>"><a href="<?= $url ?>?page=main&tab=rules">Rules</a></li>
 		<?php if($settings['board']) { ?>
 		<li class="spacer">&nbsp;</li>

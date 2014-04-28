@@ -3,7 +3,7 @@
 </div> <!-- content -->
 </div> <!-- mainbox -->
 <div id="footer">
-TAMUHVZ website code and design &copy;2010-2013 Ryan Schmidt<br />
+TAMUHVZ website code and design &copy;2010-2014 Ryan Schmidt<br />
 All trademarks are property of their respective owners<br />
 <a href="contact.php">Contact webmaster</a> &bull; <a href="privacy.php">Privacy policy</a>
 </div>
