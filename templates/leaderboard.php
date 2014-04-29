@@ -86,7 +86,7 @@ $totalPoints = $user->getTotalPoints() + $totalGame;
 <span class="label2 wide">Previous Games:</span> <?= $user->getTotalPoints() ?><br />
 <span class="label2 wide">Game Participation:</span> <?= $settings['participation points'] ?><br />
 <span class="label2 wide">Mission Participation:</span> <?= $missionBase ?><br />
-<span class="label2 wide">Mission Wins:</span> <?= $missionFaction ?><br />
+<span class="label2 wide">Mission Objectives:</span> <?= $missionFaction ?><br />
 <span class="label2 wide">Kills:</span> <?= $settings['kill points'] * $user->getKills() ?><br />
 <span class="label2 wide">Miscellaneous:</span> <?= $user->getPoints() ?><hr />
 <span class="label2 wide">Total Game Points:</span> <?= $totalGame ?><br />

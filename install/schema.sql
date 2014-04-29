@@ -182,6 +182,7 @@ CREATE TABLE `mission_info` (
   `description` text NOT NULL,
   `points` int(10) NOT NULL DEFAULT 0,
   `flags` int(10) NOT NULL DEFAULT 0,
+  `inserted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`game`, `mission`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 

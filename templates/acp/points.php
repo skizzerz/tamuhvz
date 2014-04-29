@@ -39,7 +39,7 @@ if (isset($_POST['addmission'])) {
 
 $missions = array();
 $nomissions = false;
-$res = $db->query("SELECT mi.mission, mi.description, mi.points, mi.flags, GROUP_CONCAT(mr.faction ORDER BY mr.faction ASC) faction, GROUP_CONCAT(mr.points ORDER BY mr.faction ASC) faction_points, GROUP_CONCAT(mr.note ORDER BY mr.faction ASC) faction_notes FROM mission_info mi LEFT JOIN mission_results mr ON mi.game = mr.game AND mi.mission = mr.mission WHERE mi.game = {$settings['current game']} GROUP BY mi.mission");
+$res = $db->query("SELECT mi.mission, mi.description, mi.points, mi.flags, GROUP_CONCAT(mr.faction ORDER BY mr.faction ASC) faction, GROUP_CONCAT(mr.points ORDER BY mr.faction ASC) faction_points, GROUP_CONCAT(mr.note ORDER BY mr.faction ASC) faction_notes FROM mission_info mi LEFT JOIN mission_results mr ON mi.game = mr.game AND mi.mission = mr.mission WHERE mi.game = {$settings['current game']} GROUP BY mi.mission ORDER BY mi.inserted DESC");
 if (!$res->numRows()) {
 	$nomissions = true;
 } else {
