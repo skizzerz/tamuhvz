@@ -65,9 +65,10 @@ if (isset($_POST['submit'])) {
 		}
 		//now update this user
 		$uin = $user->uin;
+		$spartners = implode(',', $partners);
 		$db->query("UPDATE users SET feeds=feeds+1, kills=kills+1 WHERE uin='$uin'");
 		$db->query("UPDATE game SET feeds=feeds+1, kills=kills+1, fed=NOW() WHERE game={$settings['current game']} AND uin='$uin'");
-		$db->query("INSERT INTO feeds (game, zombie, victim, time, feeds) VALUES({$settings['current game']}, '$uin', '$id', NOW(), '$partners')");
+		$db->query("INSERT INTO feeds (game, zombie, victim, time, feeds) VALUES({$settings['current game']}, '$uin', '$id', NOW(), '$spartners')");
 		//and update the victim (we report time turned/fed as 1 hour from now, but just mark them as a zombie now)
 		//but don't update a suicided victim
 		if ($row->registered) {
@@ -85,7 +86,7 @@ if (isset($_POST['submit'])) {
 }
 
 function checkValidId($id) {
-	global $idregex, $db;
+	global $idregex, $db, $settings;
 	if (!preg_match($idregex, $id)) {
 		//invalid id (not 8 hex digits)
 		echo '<span class="error">Invalid ID. If a player gave this ID to you, please contact a mod</span><br />';
