@@ -1,6 +1,6 @@
 <?php if (!defined('HVZ')) die(-1); ?>
 <h1>Missions</h1>
-<p>You can generate mission IDs and assign point values to them on this page. Be sure to give the mission ID out to the players so they can input it (the debriefing at the end is a good time for this). New missions will appear at the bottom of the table.</p>
+<p>You can generate mission IDs and assign point values to them on this page. Be sure to give the mission ID out to the players so they can input it (the debriefing at the end is a good time for this). New missions will appear at the top of the table.</p>
 <?php
 // get some variables set up
 $res = $db->select('factions', '*');

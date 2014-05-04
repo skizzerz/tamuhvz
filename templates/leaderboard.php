@@ -11,6 +11,12 @@ while ($row = $res->fetchRow()) {
 
 $showCodeEntry = ($settings['game status'] == 4 && $user->getFaction() > -3);
 
+// check leaderboard type
+$leaderboardType = 'all';
+if ($settings['game status'] == 4 && isset($_GET['type']) && $_GET['type'] == 'game') {
+	$leaderboardType = 'game';
+}
+
 // check post
 if (isset($_POST['missionsubmit']) && $showCodeEntry) {
 	$doneMissions = array();
@@ -62,6 +68,46 @@ while ($row = $res->fetchRow()) {
 }
 $totalGame = $settings['participation points'] + $missionBase + $missionFaction + ($settings['kill points'] * $user->getKills()) + $user->getPoints();
 $totalPoints = $user->getTotalPoints() + $totalGame;
+
+// get leaderboard info
+if ($leaderboardType == 'game') {
+	$baseSelect = "SELECT u.uin, u.name, ({$settings['participation points']} + g.points + (g.kills * {$settings['kill points']}) + COALESCE(SUM(mi.points + mr.points), 0)) AS points FROM users u JOIN game g ON g.uin = u.uin AND g.game = {$settings['current game']} LEFT JOIN missions m ON m.uin = u.uin AND m.game = {$settings['current game']} LEFT JOIN mission_info mi ON m.game = mi.game AND m.mission = mi.mission LEFT JOIN mission_results mr ON m.game = mr.game AND m.mission = mr.mission AND m.faction = mr.faction GROUP BY u.uin ORDER BY points DESC";
+} else {
+	$baseSelect = "SELECT u.uin, u.name, (u.points + {$settings['participation points']} + g.points + (g.kills * {$settings['kill points']}) + COALESCE(SUM(mi.points + mr.points), 0)) AS points FROM users u JOIN game g ON g.uin = u.uin AND g.game = {$settings['current game']} LEFT JOIN missions m ON m.uin = u.uin AND m.game = {$settings['current game']} LEFT JOIN mission_info mi ON m.game = mi.game AND m.mission = mi.mission LEFT JOIN mission_results mr ON m.game = mr.game AND m.mission = mr.mission AND m.faction = mr.faction GROUP BY u.uin ORDER BY points DESC";
+}
+$leaderboard = array();
+$res = $db->query($baseSelect);
+$i = 0;
+$t = 1;
+$p = -1;
+$n = 0;
+$f = false;
+while ($row = $res->fetchRow()) {
+	if ($row->points != $p) {
+		$i += $t;
+		$t = 1;
+	} else {
+		$t++;
+	}
+
+	$p = $row->points;
+
+	if ($n < 10 || $row->uin == $user->getUin()) {
+		$leaderboard[] = array($i, $row->name, $row->points, $row->uin);
+	}
+
+	$n++;
+
+	if ($row->uin == $user->getUin()) {
+		$f = true;
+	}
+
+	if ($f && $n >= 10) {
+		break;
+	}
+}
+unset($res, $row, $i, $t, $p, $n, $f);
+
 ?>
 <?php if ($showCodeEntry) { ?>
 <fieldset>
@@ -78,7 +124,7 @@ $totalPoints = $user->getTotalPoints() + $totalGame;
 <input type="submit" name="missionsubmit" value="Redeem" />
 </form>
 </fieldset>
-<?php } // game in progress ?>
+<?php } // show code entry ?>
 <fieldset>
 <legend>My Points</legend>
 <p>This details how many points you currently have. Please note that any point values shown for the game currently in progress are not final and are subject to change.</p>
@@ -92,4 +138,26 @@ $totalPoints = $user->getTotalPoints() + $totalGame;
 <span class="label2 wide">Total Game Points:</span> <?= $totalGame ?><br />
 <span class="label2 wide">Total Points:</span> <?= $totalPoints ?><br />
 </p>
+</fieldset>
+<fieldset>
+<legend>Leaderboard</legend>
+<?php if ($settings['game status'] == 4) { ?>
+<form method="GET">
+<input type="hidden" name="page" value="main" />
+<input type="hidden" name="tab" value="leaderboard" />
+<label><input type="radio" name="type" value="all" <?= $leaderboardType == 'all' ? 'checked' : '' ?> /> Overall</label>
+<label><input type="radio" name="type" value="game" <?= $leaderboardType == 'game' ? 'checked' : '' ?> /> Current game</label>
+<input type="submit" value="Update" />
+</form>
+<?php } // game in progress ?>
+<table class="prettytable">
+	<tr><th>Position</th><th>Name</th><th>Points</th></tr>
+<?php $n = 0; foreach ($leaderboard as $entry) {
+	$us = $entry[3] == $user->getUin();
+	$pre = $us ? '<b>' : '';
+	$post = $us ? '</b>' : '';
+	if ($us && ++$n == 11 && $entry[0] != $leaderboard[9][0]) { echo '<tr><td colspan="3">...</td></tr>'; } ?>
+	<tr><td><?= $pre . $entry[0] . $post ?></td><td><?= $pre . $entry[1] . $post ?></td><td><?= $pre . $entry[2] . $post ?></td>
+<?php } // leaderboard loop ?>
+</table>
 </fieldset>

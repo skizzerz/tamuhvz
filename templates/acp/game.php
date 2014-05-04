@@ -24,6 +24,8 @@ for($i = 0; $i < 5; $i++) {
 		$db->query("UPDATE settings SET value='$i' WHERE name='game status'");
 		$settings['game status'] = $i;
 		if($i == '0') {
+			// update point values
+			$db->query("UPDATE users u JOIN game g ON g.uin = u.uin AND g.game = {$settings['current game']} SET u.points = (u.points + {$settings['participation points']} + g.points + (g.kills * {$settings['kill points']}) + (SELECT COALESCE(SUM(mi.points + mr.points), 0) FROM missions m JOIN mission_info mi ON m.game = mi.game AND m.mission = mi.mission JOIN mission_results mr ON m.game = mr.game AND m.mission = mr.mission AND m.faction = mr.faction WHERE m.uin = u.uin AND m.game = {$settings['current game']}))");
 			//end the game
 			$settings['current game']++;
 			$db->query("UPDATE settings set value='{$settings['current game']}' WHERE name='current game'");
@@ -140,7 +142,8 @@ they did when the game got paused</p>
 	<td style="text-align: center"><?= $settings['game status'] == '4' ? '<input type="submit" name="submit0" value="Advance" />' : ($settings['game status'] == '0' ? 'Current' : '') ?></td>
 	<td>
 		<h3>End Game</h3>
-		Well, it was fun while it lasted!
+		Well, it was fun while it lasted!<br />
+		<span class="error">This will finalize all point values, making them unable to be changed in the future. Make sure that the participation, kill, and mission points are where you want them to be at before proceeding!</span>
 	</td>
 </tr>
 </table>
