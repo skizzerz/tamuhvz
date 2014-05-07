@@ -66,14 +66,18 @@ while ($row = $res->fetchRow()) {
 	$missionBase += $row->partPoints;
 	$missionFaction += $row->factPoints;
 }
-$totalGame = $settings['participation points'] + $missionBase + $missionFaction + ($settings['kill points'] * $user->getKills()) + $user->getPoints();
+if ($user->registered) {
+	$totalGame = $settings['participation points'] + $missionBase + $missionFaction + ($settings['kill points'] * $user->getKills()) + $user->getPoints();
+} else {
+	$totalGame = 0;
+}
 $totalPoints = $user->getTotalPoints() + $totalGame;
 
 // get leaderboard info
 if ($leaderboardType == 'game') {
 	$baseSelect = "SELECT u.uin, u.name, ({$settings['participation points']} + g.points + (g.kills * {$settings['kill points']}) + COALESCE(SUM(mi.points + mr.points), 0)) AS points FROM users u JOIN game g ON g.uin = u.uin AND g.game = {$settings['current game']} LEFT JOIN missions m ON m.uin = u.uin AND m.game = {$settings['current game']} LEFT JOIN mission_info mi ON m.game = mi.game AND m.mission = mi.mission LEFT JOIN mission_results mr ON m.game = mr.game AND m.mission = mr.mission AND m.faction = mr.faction GROUP BY u.uin ORDER BY points DESC";
 } else {
-	$baseSelect = "SELECT u.uin, u.name, (u.points + {$settings['participation points']} + g.points + (g.kills * {$settings['kill points']}) + COALESCE(SUM(mi.points + mr.points), 0)) AS points FROM users u JOIN game g ON g.uin = u.uin AND g.game = {$settings['current game']} LEFT JOIN missions m ON m.uin = u.uin AND m.game = {$settings['current game']} LEFT JOIN mission_info mi ON m.game = mi.game AND m.mission = mi.mission LEFT JOIN mission_results mr ON m.game = mr.game AND m.mission = mr.mission AND m.faction = mr.faction GROUP BY u.uin ORDER BY points DESC";
+	$baseSelect = "SELECT u.uin, u.name, CASE WHEN g.uin IS NOT NULL THEN (u.points + {$settings['participation points']} + g.points + (g.kills * {$settings['kill points']}) + COALESCE(SUM(mi.points + mr.points), 0)) ELSE u.points END AS points FROM users u LEFT JOIN game g ON g.uin = u.uin AND g.game = {$settings['current game']} LEFT JOIN missions m ON m.uin = u.uin AND m.game = {$settings['current game']} LEFT JOIN mission_info mi ON m.game = mi.game AND m.mission = mi.mission LEFT JOIN mission_results mr ON m.game = mr.game AND m.mission = mr.mission AND m.faction = mr.faction GROUP BY u.uin ORDER BY points DESC";
 }
 $leaderboard = array();
 $res = $db->query($baseSelect);
@@ -130,11 +134,11 @@ unset($res, $row, $i, $t, $p, $n, $f);
 <p>This details how many points you currently have. Please note that any point values shown for the game currently in progress are not final and are subject to change.</p>
 <p>
 <span class="label2 wide">Previous Games:</span> <?= $user->getTotalPoints() ?><br />
-<span class="label2 wide">Game Participation:</span> <?= $settings['participation points'] ?><br />
+<span class="label2 wide">Game Participation:</span> <?= $user->registered ? $settings['participation points'] : 0 ?><br />
 <span class="label2 wide">Mission Participation:</span> <?= $missionBase ?><br />
 <span class="label2 wide">Mission Objectives:</span> <?= $missionFaction ?><br />
 <span class="label2 wide">Kills:</span> <?= $settings['kill points'] * $user->getKills() ?><br />
-<span class="label2 wide">Miscellaneous:</span> <?= $user->getPoints() ?><hr />
+<span class="label2 wide">Miscellaneous:</span> <?= intval($user->getPoints()) ?><hr />
 <span class="label2 wide">Total Game Points:</span> <?= $totalGame ?><br />
 <span class="label2 wide">Total Points:</span> <?= $totalPoints ?><br />
 </p>
@@ -156,7 +160,8 @@ unset($res, $row, $i, $t, $p, $n, $f);
 	$us = $entry[3] == $user->getUin();
 	$pre = $us ? '<b>' : '';
 	$post = $us ? '</b>' : '';
-	if ($us && ++$n == 11 && $entry[0] != $leaderboard[9][0]) { echo '<tr><td colspan="3">...</td></tr>'; } ?>
+	++$n;
+	if ($us && $n == 11 && $entry[0] != $leaderboard[9][0]) { echo '<tr><td colspan="3" style="text-align: center">...</td></tr>'; } ?>
 	<tr><td><?= $pre . $entry[0] . $post ?></td><td><?= $pre . $entry[1] . $post ?></td><td><?= $pre . $entry[2] . $post ?></td>
 <?php } // leaderboard loop ?>
 </table>
