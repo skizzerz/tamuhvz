@@ -75,7 +75,39 @@ $totalPoints = $user->getTotalPoints() + $totalGame;
 
 // get leaderboard info
 if ($leaderboardType == 'game') {
-	$baseSelect = "SELECT u.uin, u.name, ({$settings['participation points']} + g.points + (g.kills * {$settings['kill points']}) + COALESCE(SUM(mi.points + mr.points), 0)) AS points FROM users u JOIN game g ON g.uin = u.uin AND g.game = {$settings['current game']} LEFT JOIN missions m ON m.uin = u.uin AND m.game = {$settings['current game']} LEFT JOIN mission_info mi ON m.game = mi.game AND m.mission = mi.mission LEFT JOIN mission_results mr ON m.game = mr.game AND m.mission = mr.mission AND m.faction = mr.faction GROUP BY u.uin ORDER BY points DESC";
+	$baseSelect = "SELECT
+						u.uin,
+						u.name,
+						({$settings['participation points']}
+							+ g.points
+							+ CASE WHEN (
+									{$settings['game status']} < 4
+									OR (
+										{$settings['game status']} = 4
+										AND u.faction = -2
+										AND TIMESTAMPDIFF(HOUR, g.turned, CURRENT_TIMESTAMP) < {$settings['oz hide']}
+									)
+								)
+								THEN 0
+								ELSE (g.kills * {$settings['kill points']})
+								END
+							+ COALESCE(SUM(mi.points + mr.points), 0)) AS points
+					FROM users u
+					JOIN game g
+						ON g.uin = u.uin
+						AND g.game = {$settings['current game']}
+					LEFT JOIN missions m
+						ON m.uin = u.uin
+						AND m.game = {$settings['current game']}
+					LEFT JOIN mission_info mi
+						ON m.game = mi.game
+						AND m.mission = mi.mission
+					LEFT JOIN mission_results mr
+						ON m.game = mr.game
+						AND m.mission = mr.mission
+						AND m.faction = mr.faction
+					GROUP BY u.uin
+					ORDER BY points DESC";
 } else {
 	$baseSelect = "SELECT u.uin, u.name, CASE WHEN g.uin IS NOT NULL THEN (u.points + {$settings['participation points']} + g.points + (g.kills * {$settings['kill points']}) + COALESCE(SUM(mi.points + mr.points), 0)) ELSE u.points END AS points FROM users u LEFT JOIN game g ON g.uin = u.uin AND g.game = {$settings['current game']} LEFT JOIN missions m ON m.uin = u.uin AND m.game = {$settings['current game']} LEFT JOIN mission_info mi ON m.game = mi.game AND m.mission = mi.mission LEFT JOIN mission_results mr ON m.game = mr.game AND m.mission = mr.mission AND m.faction = mr.faction GROUP BY u.uin ORDER BY points DESC";
 }
