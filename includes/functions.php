@@ -181,11 +181,6 @@ function dispatch() {
 			setVar('tab', 'guess');
 			break;
 		case 'board':
-			if(!$user->loggedin) {
-				setVar('page', 'needlogin');
-				setVar('pagename', 'Login Required');
-				break;
-			}
 			if(!$settings['board']) {
 				setVar('page', 'invalid');
 				setVar('pagename', 'Page Not Found');

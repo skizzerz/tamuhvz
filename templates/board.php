@@ -224,6 +224,66 @@ setTimeout(function() { window.location = '{$hvzurl}?page=board'; }, 5000);
 </center>
 EOM;
 		break;
+	case 'login':
+		// show a login disabled message
+		echo <<<EOM
+<style type="text/css">
+@import url("{$hvzurl}mybb/cache/themes/theme2/global.css");
+</style>
+<script type="text/javascript">
+setTimeout(function() { window.location = '{$hvzurl}?page=board'; }, 5000);
+</script>
+<center>
+<table class="tborder" style="width: 50%;">
+<tbody>
+<tr><td class="thead"><div style="font-size: 110%"><strong>Error</strong></div></td></tr>
+<tr><td class="trow1"><span class="smalltext">This function has been disabled. If you wish to log in, <a href="{$hvzurl}?page=login">click here</a>.
+<br /><br />You will be redirected to the board index shortly. If you do not want to wait, <a href="{$hvzurl}?page=board">click here</a>.</span></td></tr>
+</tbody>
+</table>
+</center>
+EOM;
+		break;
+	case 'lostpw':
+		// show a password forgotten message
+		echo <<<EOM
+<style type="text/css">
+@import url("{$hvzurl}mybb/cache/themes/theme2/global.css");
+</style>
+<script type="text/javascript">
+setTimeout(function() { window.location = '{$hvzurl}?page=board'; }, 5000);
+</script>
+<center>
+<table class="tborder" style="width: 50%;">
+<tbody>
+<tr><td class="thead"><div style="font-size: 110%"><strong>Error</strong></div></td></tr>
+<tr><td class="trow1"><span class="smalltext">This function has been disabled. If you wish to reset your password, <a href="{$hvzurl}?page=login&action=resetpass">click here</a>.
+<br /><br />You will be redirected to the board index shortly. If you do not want to wait, <a href="{$hvzurl}?page=board">click here</a>.</span></td></tr>
+</tbody>
+</table>
+</center>
+EOM;
+		break;
+	case 'register':
+		//how a registration disabled message
+		echo <<<EOM
+<style type="text/css">
+@import url("{$hvzurl}mybb/cache/themes/theme2/global.css");
+</style>
+<script type="text/javascript">
+setTimeout(function() { window.location = '{$hvzurl}?page=board'; }, 5000);
+</script>
+<center>
+<table class="tborder" style="width: 50%;">
+<tbody>
+<tr><td class="thead"><div style="font-size: 110%"><strong>Error</strong></div></td></tr>
+<tr><td class="trow1"><span class="smalltext">This function has been disabled. If you wish to register, <a href="{$hvzurl}?page=acctregister">click here</a>.
+<br /><br />You will be redirected to the board index shortly. If you do not want to wait, <a href="{$hvzurl}?page=board">click here</a>.</span></td></tr>
+</tbody>
+</table>
+</center>
+EOM;
+		break;
 	case 'index':
 	default:
 		include('index.php');

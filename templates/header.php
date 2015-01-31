@@ -82,6 +82,10 @@
 		<li class="fade<?= $tab == 'login' ? '2' : '1' ?>"><a href="<?= $url ?>?page=login">Login</a></li>
 		<li class="spacer">&nbsp;</li>
 		<li class="fade<?= $tab == 'acctregister' ? '2' : '1' ?>"><a href="<?= $url ?>?page=acctregister">Register for account</a></li>
+		<?php if($settings['board']) { ?>
+		<li class="spacer">&nbsp;</li>
+		<li class="fade<?= $tab == 'board' ? '2' : '1' ?>"><a href="<?= $url ?>?page=board">Board</a></li>
+		<?php } //end if board is enabled ?>
 		<?php } //end if logged in check ?>
 		<li class="spacer">&nbsp;</li>
 		</ul>

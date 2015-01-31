@@ -197,7 +197,7 @@ class session
 				LIMIT 1
 			");
 			$mybb->user = $db->fetch_array($query);
-		} else {
+		} else if ($uid != 0) {
 			//check if the UIN has a forum account tied to it
 			global $dbh, $userh, $factionsh;
 			$res = $dbh->select('users', true, array('uin' => $uid), 1);
@@ -343,8 +343,8 @@ class session
 		// Check the password if we're not using a session
 		// HACK: check the actual password too
 		require_once('functions_user.php');
-		if(!validate_password_from_uid($uid, $loginkey)) {
-			if(empty($loginkey) || $loginkey != $mybb->user['loginkey'] || !$mybb->user['uid'])
+		if ($uid == 0 || !validate_password_from_uid($uid, $loginkey)) {
+			if (empty($loginkey) || $loginkey != $mybb->user['loginkey'] || !$mybb->user['uid'])
 			{
 				unset($mybb->user);
 				$this->uid = 0;
